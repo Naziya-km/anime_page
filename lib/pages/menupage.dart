@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:anime/components/button.dart';
+import 'package:anime/pages/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 
 class menupage extends StatefulWidget {
   const menupage({super.key});
@@ -10,10 +14,29 @@ class menupage extends StatefulWidget {
 }
 
 class _menupageState extends State<menupage> {
+  var anime;
+
+  void getanime() async {
+    String url = ("https://kitsu.io/api/edge/anime");
+    var res = await http.get(Uri.parse(url));
+    var data = jsonDecode(res.body);
+    print(data);
+    setState(() {
+      anime = data;
+    });
+    print(data);
+  }
+
+  void initState() {
+    getanime();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 160, 154, 154),
+      backgroundColor: Color.fromARGB(255, 251, 251, 251),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -66,6 +89,7 @@ class _menupageState extends State<menupage> {
           ),
           Expanded(
             child: ListView.builder(
+              itemCount: 10,
               itemBuilder: (context, index) {
                 return Container(
                   child: Row(
@@ -76,8 +100,8 @@ class _menupageState extends State<menupage> {
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")),
+                                image: NetworkImage(anime["data"][index]
+                                    ["attributes"]["posterImage"]["original"])),
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(25)),
                         margin: EdgeInsets.all(15),
@@ -88,10 +112,15 @@ class _menupageState extends State<menupage> {
                       ),
                       Column(
                         children: [
-                          Text(
+                          Container(
+                            width: 300,
+                            child: Text(
+                              anime["data"][index]["attributes"]["titles"]
+                                  ["en_jp"],
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 35),
-                              "SOLO LEVELING"),
+                            ),
+                          ),
                           Text("ACTION"),
                           Row(
                             children: [
@@ -103,7 +132,17 @@ class _menupageState extends State<menupage> {
                           SizedBox(
                             height: 10,
                           ),
-                          button(text: "watchNow", onTap: () {})
+                          button(
+                              text: "watchNow",
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) {
+                                    return details(
+                                      data: anime["data"][index],
+                                    );
+                                  },
+                                ));
+                              })
                         ],
                       ),
                     ],
