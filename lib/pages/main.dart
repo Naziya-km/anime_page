@@ -1,4 +1,5 @@
 import 'package:anime/pages/detail.dart';
+import 'package:anime/pages/drawer.dart';
 import 'package:anime/pages/firstpage.dart';
 import 'package:anime/pages/menupage.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,9 @@ class homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(home: intropage(), routes: {
       '/intropage': (context) => const intropage(),
-      '/menupage': (context) => const menupage(),
-      '/details': (context) => details()
+      '/menupage': (context) => menupage(),
+      '/details': (context) => details(),
+      '/drawer': (context) => drawer()
     });
   }
 }
